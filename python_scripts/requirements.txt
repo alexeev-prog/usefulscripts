@@ -1,2 +1,5 @@
 ping3
 requests
+ruff
+black
+isort

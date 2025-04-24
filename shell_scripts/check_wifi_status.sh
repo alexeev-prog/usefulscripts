@@ -10,4 +10,8 @@ if ! ping -c 1 "$PING_HOST" &>/dev/null; then
     MESSAGE="⚠️ Internet is not available!"
     echo "$(date) $MESSAGE" | tee -a "$LOG_FILE"
     notify-send "Network Alert" "$MESSAGE"
+else
+    MESSAGE="Internet is available!"
+    echo "$(date) $MESSAGE" | tee -a "$LOG_FILE"
+    notify-send "Network Alert" "$MESSAGE"
 fi
