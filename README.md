@@ -29,6 +29,7 @@ shell_scripts/
 
 ```bash
 python_scripts/
+├── clean_downloads_dir.py # clean and sort files in downloads (or other) directory
 ├── check_website_access.py # check access to website
 ├── check_website_ssl_cert.py # check SSL certificate of website
 ├── create_short_url.py # create shorted URL

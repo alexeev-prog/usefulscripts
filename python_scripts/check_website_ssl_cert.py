@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 import ssl
 import socket
 from datetime import datetime
