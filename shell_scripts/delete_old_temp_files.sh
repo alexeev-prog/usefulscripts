@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Directory for clean
 TARGET_DIR="/tmp"

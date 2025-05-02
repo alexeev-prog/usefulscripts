@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Threshold of disk usage
 THRESHOLD=90

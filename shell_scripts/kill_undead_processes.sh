@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Threshold of frozed processes
 THRESHOLD=600

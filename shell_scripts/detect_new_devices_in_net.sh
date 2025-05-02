@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Detect network diaposon (ex. 192.168.1.0/24)
 NETWORK="192.168.1.0/24"

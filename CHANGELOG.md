@@ -1,3 +1,9 @@
+commit 5b53f70c1251140a307de62d5912af3a61aea83b
+Author: Alexeev Bronislav <alexeev.dev@mail.ru>
+Date:   Sun Apr 27 22:51:15 2025 +0700
+
+    add clean_downloads_dir.py
+
 commit 51de1c67f35e98171edbc369f1d1d0be91a64c76
 Author: Alexeev Bronislav <alexeev.dev@mail.ru>
 Date:   Sat Apr 26 22:05:11 2025 +0700

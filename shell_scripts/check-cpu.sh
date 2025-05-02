@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 cpu_info=$(cat /proc/cpuinfo | grep 'vendor_id' | uniq)
 

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Mountpoint
 MOUNT_DIR="$HOME/MOUNTED_DEVICE"

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 echo -e "\033[1;36m=== Temperatures ===\033[0m"
 

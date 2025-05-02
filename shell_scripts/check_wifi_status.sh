@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Host for check (Google DNS)
 PING_HOST="8.8.8.8"

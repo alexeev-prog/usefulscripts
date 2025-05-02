@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 gpu_info=$(lspci | grep -i 'vga\|3d\|2d')
 

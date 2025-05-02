@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Target directory for scan
 TARGET_DIR="$HOME"

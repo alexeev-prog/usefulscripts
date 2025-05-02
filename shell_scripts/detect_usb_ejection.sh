@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # Log file for events
 LOG_FILE="$HOME/.usb_disconnect.log"
