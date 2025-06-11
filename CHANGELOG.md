@@ -1,3 +1,15 @@
+commit 294fa01a08feb3934b32010447fa5fea9431cac8
+Author: Alexeev Bronislav <alexeev.dev@mail.ru>
+Date:   Sun Jun 8 18:19:01 2025 +0700
+
+    add `restart_frozen_systemd_services.sh`
+
+commit 23a272a417d7ef43ce9b275eade445ed98fab106
+Author: Alexeev Bronislav <alexeev.dev@mail.ru>
+Date:   Wed May 28 18:21:27 2025 +0700
+
+    add scripts
+
 commit 6946387052e7c238ea41ba44b30a8d0a7c37bc11
 Merge: 280ce0b 191f2fd
 Author: Alexeev Bronislav <alexeev.dev@mail.ru>
