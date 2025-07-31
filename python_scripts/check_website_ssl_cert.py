@@ -10,8 +10,8 @@ def check_ssl_expiry(domain, days_before=7):
     with socket.create_connection((domain, 443)) as sock:
         with context.wrap_socket(sock, server_hostname=domain) as ssock:
             cert = ssock.getpeercert()
-    
-    expiry_date = datetime.strptime(cert['notAfter'], "%b %d %H:%M:%S %Y %Z")
+
+    expiry_date = datetime.strptime(cert["notAfter"], "%b %d %H:%M:%S %Y %Z")
     remaining_days = (expiry_date - datetime.utcnow()).days
 
     if remaining_days <= days_before:

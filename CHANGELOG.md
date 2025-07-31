@@ -1,3 +1,9 @@
+commit 5994a52eb40df0a0f1a98c78bda7a513d6f8bfdc
+Author: Alexeev Bronislav <alexeev.dev@mail.ru>
+Date:   Thu Jun 12 03:30:06 2025 +0700
+
+    add get_git_version.py
+
 commit 862224143d5c65514c06291cf5d244a249369967
 Author: Alexeev Bronislav <alexeev.dev@mail.ru>
 Date:   Thu Jun 12 03:29:19 2025 +0700

@@ -2,7 +2,7 @@ import requests
 
 
 def shorten_url(url):
-    response = requests.get("http://tinyurl.com/api-create.php?url="+url)
+    response = requests.get("http://tinyurl.com/api-create.php?url=" + url)
     return response.text
 
 

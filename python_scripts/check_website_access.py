@@ -2,6 +2,7 @@
 import requests
 from ping3 import ping
 
+
 # Check website by HTTP request
 def check_website(url):
     try:
