@@ -1,3 +1,9 @@
+commit 1c7407f17fe33dae9065f7081d497e9c18457e1f
+Author: Alexeev Bronislav <alexeev.dev@mail.ru>
+Date:   Mon Aug 11 13:46:59 2025 +0700
+
+    add check_usb_devices.sh
+
 commit 86102c1be86d2189513f02d0b0c95529e3b985bd
 Author: Alexeev Bronislav <alexeev.dev@mail.ru>
 Date:   Thu Jul 31 22:43:24 2025 +0700
