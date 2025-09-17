@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-import json
-from pathlib import Path
-import logging
-from typing import Iterable, Union
-import os
 import argparse
+import json
+import logging
+import os
+from pathlib import Path
+from typing import Iterable, Union
 
 logging.basicConfig(
     filename=".file_sorter.log",

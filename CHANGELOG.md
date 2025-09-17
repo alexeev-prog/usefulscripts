@@ -1,3 +1,9 @@
+commit 6b7bfb70eee9a85cfa6ce8d1b04b488129c2151e
+Author: Alexeev Bronislav <alexeev.dev@mail.ru>
+Date:   Fri Sep 12 20:58:16 2025 +0700
+
+    add check_files_inotify.sh
+
 commit 59a84a477c4d038b999a121bd9e53bce28a90a2a
 Author: Alexeev Bronislav <alexeev.dev@mail.ru>
 Date:   Fri Sep 12 19:27:35 2025 +0700

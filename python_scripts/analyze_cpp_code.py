@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 import os
+import re
 import subprocess
 import sys
-import re
 from datetime import datetime
-from typing import List, Dict, Any
+from typing import Any, Dict, List
 
 
 class CppAnalyzer:

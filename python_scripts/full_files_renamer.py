@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
-import os
 import datetime
+import os
 
 folder_path = "directory"
 if not os.path.exists(folder_path):
