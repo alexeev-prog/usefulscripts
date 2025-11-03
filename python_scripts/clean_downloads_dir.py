@@ -3,8 +3,8 @@ import argparse
 import json
 import logging
 import os
+from collections.abc import Iterable
 from pathlib import Path
-from typing import Iterable, Union
 
 logging.basicConfig(
     filename=".file_sorter.log",
@@ -166,7 +166,7 @@ DEFAULT_EXTENSIONS = {
 
 def load_extensions(filename: str = "extensions.json"):
     if Path(filename).exists():
-        with open(filename, "r") as read_file:
+        with open(filename) as read_file:
             data = json.load(read_file)
     else:
         with open(filename, "w") as write_file:
@@ -180,7 +180,7 @@ EXTENSIONS = load_extensions()
 
 
 class Folder:
-    def __init__(self, path: Union[Path, str]) -> None:
+    def __init__(self, path: Path | str) -> None:
         self.path = Path(path) if isinstance(path, str) else path
 
     def _get_subfolder_paths(self) -> Iterable:
@@ -212,7 +212,7 @@ class Folder:
                         )
                         path.rename(new_path)
                     except Exception as ex:
-                        logging.error(
+                        logging.exception(
                             f"Error raised when working with {self.path}: {ex}"
                         )
 

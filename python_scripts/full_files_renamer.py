@@ -1,11 +1,12 @@
 #!/usr/bin/env python3
 import datetime
 import os
+import sys
 
 folder_path = "directory"
 if not os.path.exists(folder_path):
     print(f"Dir {folder_path} not found.")
-    exit()
+    sys.exit()
 
 for filename in os.listdir(folder_path):
     old_path = os.path.join(folder_path, filename)

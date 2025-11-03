@@ -4,14 +4,14 @@ import re
 import subprocess
 import sys
 from datetime import datetime
-from typing import Any, Dict, List
+from typing import Any
 
 
 class CppAnalyzer:
     MAX_LINE_LENGTH: int = 120
-    IGNORED_DIRECTORIES: List[str] = ["build", "docs", "npm-packages"]
+    IGNORED_DIRECTORIES: list[str] = ["build", "docs", "npm-packages"]
 
-    FUNCTION_GUIDELINES: Dict[str, str] = {
+    FUNCTION_GUIDELINES: dict[str, str] = {
         "malloc": "https://en.cppreference.com/w/c/memory/malloc",
         "free": "https://en.cppreference.com/w/c/memory/free",
         "strcpy": "https://en.cppreference.com/w/c/string/byte/strcpy",
@@ -28,8 +28,8 @@ class CppAnalyzer:
 
     def __init__(self, repo_path: str) -> None:
         self.repo_path = os.path.abspath(repo_path)
-        self.reports: List[Dict[str, Any]] = []
-        self.modified_files: List[str] = self.get_modified_files()
+        self.reports: list[dict[str, Any]] = []
+        self.modified_files: list[str] = self.get_modified_files()
         self.setup_console()
 
     def setup_console(self) -> None:
@@ -37,7 +37,7 @@ class CppAnalyzer:
         print("\033[1;32m C++ Code Analyzer Initialized \033[0m")  # Green
         print("\033[1;36m=============================\033[0m")  # Cyan
 
-    def get_modified_files(self) -> List[str]:
+    def get_modified_files(self) -> list[str]:
         print(
             "\033[1;33mChecking for modified C++ files in the repository...\033[0m"
         )  # Yellow
@@ -62,7 +62,7 @@ class CppAnalyzer:
     def format_file(self, file_path: str) -> None:
         subprocess.run(["clang-format", "-i", file_path], check=True)
 
-    def analyze_file(self, file_path: str) -> Dict[str, Any]:
+    def analyze_file(self, file_path: str) -> dict[str, Any]:
         report = {
             "file_path": file_path,
             "file_size": self.get_file_size(file_path),
@@ -82,7 +82,7 @@ class CppAnalyzer:
 
         try:
             print(f"\033[1;34mAnalyzing file: {file_path}...\033[0m")  # Blue
-            with open(file_path, "r") as f:
+            with open(file_path) as f:
                 for line_number, line in enumerate(f, start=1):
                     line = line.strip()
                     report["line_count"] += 1  # Update line count
@@ -148,11 +148,11 @@ class CppAnalyzer:
 
     def get_file_description(self, file_path: str) -> str:
         """Get a brief description of the file."""
-        with open(file_path, "r") as f:
+        with open(file_path) as f:
             first_line = f.readline().strip()
         return first_line if first_line else "No description available."
 
-    def analyze_memory_usage(self, line: str, line_number: int) -> List[str]:
+    def analyze_memory_usage(self, line: str, line_number: int) -> list[str]:
         issues = []
         memory_patterns = [
             (
@@ -167,7 +167,7 @@ class CppAnalyzer:
 
         return issues
 
-    def analyze_legacy_code(self, line: str, line_number: int) -> List[str]:
+    def analyze_legacy_code(self, line: str, line_number: int) -> list[str]:
         issues = []
         legacy_patterns = [
             (
@@ -182,12 +182,12 @@ class CppAnalyzer:
 
         return issues
 
-    def extract_warnings(self, output: str) -> List[str]:
+    def extract_warnings(self, output: str) -> list[str]:
         return [
             line for line in output.splitlines() if "warning" in line or "error" in line
         ]
 
-    def analyze_dependencies(self) -> List[str]:
+    def analyze_dependencies(self) -> list[str]:
         print("\033[1;34mAnalyzing dependencies...\033[0m")  # Blue
 
         dependency_warnings = []
@@ -200,10 +200,10 @@ class CppAnalyzer:
                     )
         return dependency_warnings
 
-    def find_includes(self, file_path: str) -> List[str]:
+    def find_includes(self, file_path: str) -> list[str]:
         includes = []
         try:
-            with open(file_path, "r") as f:
+            with open(file_path) as f:
                 for line in f:
                     match = re.match(r'#include\s+"(.+)"', line) or re.match(
                         r"#include\s+<(.+)>", line
@@ -228,13 +228,12 @@ class CppAnalyzer:
 
     def repository_information(self) -> str:
         """Retrieve and format information about the repository."""
-        repo_info = f"""
+        return f"""
         <h2>Repository Information</h2>
         <p><strong>Repository Path:</strong> {self.repo_path}</p>
         <p><strong>Modified Files:</strong> {", ".join(self.modified_files) if self.modified_files else "None"}</p>
         <p><strong>Analysis Date:</strong> {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}</p>
         """
-        return repo_info
 
     def generate_report(self, output_file: str) -> None:
         # Add summary statistics
@@ -347,7 +346,7 @@ class CppAnalyzer:
             len(report.get("legacy_issues", [])) for report in self.reports
         )
 
-        summary = f"""
+        return f"""
         <div style='background-color: #232323; border: 1px solid #444; padding: 15px; margin: 15px 0; border-radius: 5px;'>
             <h2 style='color: #00ff99;'>Summary</h2>
             <p><strong>Total Files Analyzed:</strong> {total_files}</p>
@@ -358,7 +357,6 @@ class CppAnalyzer:
             <p><strong>Total Legacy Code Issues:</strong> {total_legacy_issues}</p>
         </div>
         """
-        return summary
 
     def run_analysis(self) -> None:
         print("\033[1;33mStarting analysis...\033[0m")  # Yellow

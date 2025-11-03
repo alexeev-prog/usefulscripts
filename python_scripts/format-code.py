@@ -59,12 +59,14 @@ def convert_tabs(file_path, tab_size, conversion_type):
             print(f"{BOLD}Converting tabs to spaces...{NC}")
             subprocess.run(
                 ["expand", "-t", str(tab_size), file_path],
+                check=False,
                 stdout=open(f"{file_path}.tmp", "w"),
             )
         elif conversion_type == "tabs":
             print(f"{BOLD}Converting spaces to tabs...{NC}")
             subprocess.run(
                 ["unexpand", "-t", str(tab_size), file_path],
+                check=False,
                 stdout=open(f"{file_path}.tmp", "w"),
             )
         else:
@@ -76,7 +78,7 @@ def convert_tabs(file_path, tab_size, conversion_type):
         os.replace(f"{file_path}.tmp", file_path)
         print(f"{GREEN}Conversion completed successfully: {file_path}{NC}")
     except Exception as e:
-        print_error(f"Conversion failed: {str(e)}")
+        print_error(f"Conversion failed: {e!s}")
 
 
 def main():
@@ -96,7 +98,7 @@ def main():
         print(f"{GREEN}Formatting completed successfully: {sys.argv[1]}{NC}")
         return
 
-    for root, dirs, files in os.walk(os.getcwd()):
+    for root, _dirs, files in os.walk(os.getcwd()):
         if len(set(root.split("/")).intersection(IGNORED_DIRS)) > 0:
             continue
         for file in files:
