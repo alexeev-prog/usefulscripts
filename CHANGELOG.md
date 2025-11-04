@@ -1,3 +1,9 @@
+commit 4f33f73f4025ddd5762c8252c1604bb21d169763
+Author: Alexeev Bronislav <alexeev.dev@mail.ru>
+Date:   Mon Nov 3 17:55:46 2025 +0700
+
+    fix codestyle of python scripts, add shell scripts for io, net and mem analysis
+
 commit a02243b1eb4b7c9d9f6102c2679ff01089992dfd
 Author: Alexeev Bronislav <alexeev.dev@mail.ru>
 Date:   Wed Sep 17 21:34:40 2025 +0700
