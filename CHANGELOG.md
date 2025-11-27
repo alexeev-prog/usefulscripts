@@ -1,3 +1,9 @@
+commit cea21752dc8b27cb7605ae9e4a6b5b294eab25d2
+Author: Alexeev Bronislav <alexeev.dev@mail.ru>
+Date:   Thu Nov 27 22:10:00 2025 +0700
+
+    add emoji, grepline, httpstatus, jsonformat, list_of_wifi_nets, mkcd, mksh, tempe, urldesc, getuuid scripts
+
 commit 1face86f118e47d1878fe82d2f7a1e3f17c26eab
 Author: Alexeev Bronislav <alexeev.dev@mail.ru>
 Date:   Tue Nov 4 14:13:14 2025 +0700

@@ -74,7 +74,7 @@ python_scripts/
 
 ```bash
 ruby_scripts/
-└── getuuid.ruby                      # UUID generation and validation utilities
+└── getuuid.rb                      # UUID generation and validation utilities
 ```
 
 ## Installation
