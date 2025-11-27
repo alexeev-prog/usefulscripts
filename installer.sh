@@ -6,3 +6,6 @@ cp shell_scripts/* -r ~/.local/bin/
 
 echo "Install python scripts"
 cp python_scripts/* -r ~/.local/bin/
+
+echo "Install ruby scripts"
+cp ruby_scripts/* -r ~/.local/bin/

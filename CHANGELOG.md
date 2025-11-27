@@ -1,3 +1,9 @@
+commit 1face86f118e47d1878fe82d2f7a1e3f17c26eab
+Author: Alexeev Bronislav <alexeev.dev@mail.ru>
+Date:   Tue Nov 4 14:13:14 2025 +0700
+
+    add coredumps watcher script
+
 commit 4f33f73f4025ddd5762c8252c1604bb21d169763
 Author: Alexeev Bronislav <alexeev.dev@mail.ru>
 Date:   Mon Nov 3 17:55:46 2025 +0700
