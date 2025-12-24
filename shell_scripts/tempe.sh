@@ -10,7 +10,7 @@ tempe() {
         return 1
     fi
 
-    if ! chmod -R 0700 "$temp_dir"; then
+    if ! chmod -R 0700 "$temp_dir"; then№
         echo -e "\033[1;31mError: Cannot set permissions\033[0m" >&2
         return 1
     fi

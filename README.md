@@ -1,5 +1,4 @@
 # Useful Scripts
-
 A curated collection of practical Bash, Python, and Ruby scripts for system administration, development, and automation tasks.
 
 ## Project Structure

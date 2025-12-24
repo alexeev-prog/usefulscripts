@@ -1,3 +1,9 @@
+commit 9917541c6bbc56c6030bc76c6355114073704cd3
+Author: Alexeev Bronislav <alexeev.dev@mail.ru>
+Date:   Thu Nov 27 22:11:11 2025 +0700
+
+    fix extension ruby -> rb
+
 commit cea21752dc8b27cb7605ae9e4a6b5b294eab25d2
 Author: Alexeev Bronislav <alexeev.dev@mail.ru>
 Date:   Thu Nov 27 22:10:00 2025 +0700
