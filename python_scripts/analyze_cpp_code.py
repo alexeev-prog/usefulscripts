@@ -23,7 +23,6 @@ class CppAnalyzer:
         "snprintf": "https://en.cppreference.com/w/c/string/byte/snprintf",
         "cout": "https://en.cppreference.com/w/cpp/io/basic_ostream/operator_lt_lt",
         "cin": "https://en.cppreference.com/w/cpp/io/basic_istream/operator_gt_gt",
-        # Add more functions as needed
     }
 
     def __init__(self, repo_path: str) -> None:

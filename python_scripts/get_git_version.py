@@ -73,7 +73,7 @@ Build: {self.build}
 Standard: {self.standard}
 Commit: {self.commit}
 
-Domkrat3D {self.full} {self.commit_hash}
+GitRepo {self.full} {self.commit_hash}
 """
 
 

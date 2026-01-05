@@ -18,7 +18,7 @@ IGNORED_DIRS = ["dist", ".git", "docs", "ignored", "venv", "resources"]
 RUFF = "ruff"
 SPACETABS = "./space-tabs.sh"
 
-print(f"api code-formatter: {RUFF}; Extensions: {' '.join(py_extensions)}")
+print(f"code-formatter: {RUFF}; Extensions: {' '.join(py_extensions)}")
 
 
 def print_usage():
@@ -82,12 +82,6 @@ def convert_tabs(file_path, tab_size, conversion_type):
 
 
 def main():
-    # Set the current working directory for scanning c/c++ sources (including
-    # header files) and apply the clang formatting
-    # Please note "-style" is for standard style options
-    # and "-i" is in-place editing
-
-    # os.system("pylint pyechonext --clear-cache-post-run y")
     os.system("isort .")
     os.system("black .")
 
