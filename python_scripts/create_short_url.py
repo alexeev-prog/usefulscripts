@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+import sys
+
 import requests
 
 
@@ -7,6 +9,6 @@ def shorten_url(url):
     return response.text
 
 
-url = "https://example.com"
+url = sys.argv[1]
 short_url = shorten_url(url)
 print(f"The shortened URL is: {short_url}")

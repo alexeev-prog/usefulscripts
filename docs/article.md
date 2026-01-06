@@ -148,7 +148,7 @@ if __name__ == "__main__":
     print(git_version)
 ```
 
-Этот скрипт позволяет получать информацию о репозитории, включая релизные теги в определенном формате (`git describe --match v[0-9]* --abbrev=0 --tags`). Я сам достаточно часто использую этот скрипт, если надо координировать работу с git-репозиторием.
+Этот скрипт позволяет получать информацию о репозитории, включая релизные теги в определенном формате (`git describe --match v[0-9]* --abbrev=0 --tags`). Я сам достаточно часто использую этот скрипт, если надо координировать работу с git-репозиторием. Он использует последний тег (vX.X.X) как базовую версию и добавляет количество коммитов после тега как номер сборки. Для main/release веток версия отображается без имени ветки, для остальных - с именем ветки. Если тегов нет, используется версия 0.1.0. Скрипт полезен для CI/CD пайплайнов, чтобы автоматически генерировать версии сборок.
 
 ## Полезные алиасы
 Я использую достаточно часто алиасы для своего шелла. Например, я через `alias ls='exa --icons'` заменил `ls` на утилиту `exa`.
@@ -260,6 +260,8 @@ MAX_AGE=7
 find "$TARGET_DIR" -type f -mtime +$MAX_AGE -exec rm -v {} \;
 echo "✅ Delete temporary files that are more $MAX_AGE days from $TARGET_DIR"
 ```
+
+Если мне нужно получить какой нибудь эмодзи, я использую скрипт [emoji.sh](https://github.com/alexeev-prog/usefulscripts/blob/main/shell_scripts/emoji.sh), который позволяет получать по названию эмодзи (`emoji.sh smile`).
 
 Также из [этой статьи](https://habr.com/ru/companies/ruvds/articles/961514/) я позаимствовал себе в систему следующие скрипты:
 
@@ -395,14 +397,321 @@ else
 fi
 ```
 
-##
+## Проверяем остаток свободного места
+Этот скрипт крайне простой, его задача в том чтобы парсить остаток свободного места и если его меньше 90%, то сообщать об этом. Этот скрипт можно оформить в виде фонового демона или интегрировать в ваш WM, к примеру.
+
+```bash
+#!/usr/bin/env bash
+
+THRESHOLD=90
+LOG_FILE="$HOME/.disk_usage.log"
+
+DISK_USAGE=$(df / | awk 'NR==2 {print $5}' | sed 's/%//')
+
+if [ "$DISK_USAGE" -ge "$THRESHOLD" ]; then
+    MESSAGE="⚠️ Disk space is used by $DISK_USAGE%!"
+    echo "$MESSAGE" | tee -a "$LOG_FILE"
+    notify-send "Disk Alert" "$MESSAGE"
+fi
+```
+
+## Проверка использования процессора
+Абсолютно аналогичный скрипт предыдущему, только вместо места на диске - нагрузка на процессор.
+
+```bash
+#!/usr/bin/env bash
+
+THRESHOLD=80
+LOG_FILE="$HOME/.cpu_usage.log"
+
+CPU_LOAD=$(awk '{print $1}' < /proc/loadavg | awk '{print $1*100}')
+
+if (( ${CPU_LOAD%.*} >= THRESHOLD )); then
+    MESSAGE="⚠️ High CPU Usage: $CPU_LOAD%"
+    echo "$MESSAGE" | tee -a "$LOG_FILE"
+    notify-send "CPU Alert" "$MESSAGE"
+fi
+```
+
+## Детектинг изменения подключенных USB-девайсов
+Данный скрипт в первый запуск сохраняет текущие usb-девайсы в лог-файл, затем перепроверя и сравнивая текущие подключения с подключениями из файла. Такой скрипт можно также оформить в демон.
+
+```bash
+#!/usr/bin/env bash
+
+LOG_FILE="/var/log/usb_changes.log"
+STATE_FILE="/var/log/usb_changes/usb_state.txt"
+
+mkdir -p /var/log/usb_changes
+
+echo "🔍 Searching installed USB... $(date)" | tee -a "$LOG_FILE"
+
+lsusb > /var/log/current_usb.txt
+
+if [ ! -f "$STATE_FILE" ]; then
+    cp /var/log/current_usb.txt "$STATE_FILE"
+    echo "📦 First save for USB" | tee -a "$LOG_FILE"
+    exit 0
+fi
+
+if ! diff "$STATE_FILE" /var/log/current_usb.txt >/dev/null; then
+    echo "⚠️  USB Connections changed" | tee -a "$LOG_FILE"
+    echo "--- After:" | tee -a "$LOG_FILE"
+    cat "$STATE_FILE" | tee -a "$LOG_FILE"
+    echo "--- Before:" | tee -a "$LOG_FILE"
+    cat /var/log/current_usb.txt | tee -a "$LOG_FILE"
+    cp /var/log/current_usb.txt "$STATE_FILE"
+else
+    echo "✅ USB Connections not changed" | tee -a "$LOG_FILE"
+fi
+
+rm /var/log/current_usb.txt
+```
+
+## Анализ использования памяти
+Этот скрипт я задействую для краткой сводки по памяти, здесь собирается вывод команды free-h, информация из /proc/meminfo, сортировка проессов по использованию RSS-памяти, процессы с большим использованием грязных страниц и memory pressure.
+
+ > Resident set size (RSS) — термин, который в контексте управления памятью в операционной системе означает размер страниц памяти, выделенных процессу и в настоящее время находящихся в ОЗУ (RAM).
+
+ > Memory pressure — это термин, используемый для описания состояния компьютерной системы, когда её доступные ресурсы памяти используются в большом объёме
+
+```bash
+#!/usr/bin/env bash
+
+echo "=== Memory Analysis and OOM Killer Candidate Processes ==="
+echo "Timestamp: $(date)"
+echo ""
+
+echo "1. Memory Summary:"
+echo "-------------------"
+free -h
+echo ""
+
+echo "2. Detailed RAM and Swap Usage:"
+echo "----------------------------------------"
+cat /proc/meminfo | grep -E "(MemTotal|MemAvailable|SwapTotal|SwapFree|SwapCached)"
+echo ""
+
+echo "3. Top 10 Processes by Resident Memory (RSS) Usage:"
+echo "-------------------------------------------------------------"
+ps aux --sort=-%mem | awk 'NR<=11 {printf "%-8s %-6s %-4s %-8s %-8s %s\n", $2, $1, $4, $3, $6/1024" MB", $11}'
+echo ""
+
+echo "4. Processes with Large Amounts of Dirty Memory:"
+echo "------------------------------------------------------------------"
+for pid in $(ps -eo pid --no-headers); do
+  if [ -f /proc/$pid/statm ]; then
+    dirty_pages=$(grep -i "Private_Dirty:" /proc/$pid/smaps 2>/dev/null | awk '{sum += $2} END {print sum}')
+    if [ -n "$dirty_pages" ] && [ "$dirty_pages" -gt 1000 ]; then
+      proc_name=$(cat /proc/$pid/comm 2>/dev/null)
+      dirty_kb=$((dirty_pages * 4))
+      echo "PID: $pid, Name: $proc_name, Dirty Memory: $dirty_kb KB"
+    fi
+  fi
+done | sort -k6 -nr | head -10
+echo ""
+
+echo "5. Memory Pressure (PSI):"
+echo "---------------------------"
+if [ -f /proc/pressure/memory ]; then
+  cat /proc/pressure/memory
+else
+  echo "Memory pressure information is not supported in this kernel version."
+fi
+echo ""
+```
+
+Если вы хотите узнать больше о работе памяти в линуксе, я [писал об этом статью, где подробно разобрал все](https://habr.com/ru/companies/timeweb/articles/804865/).
+
+## Вывод температуры CPU и NVIDIA GPU
+Данный скрипт через sensors и nvidia-smi выводит информацию о температуре вашего процессора и видеокарты (nvidia):
+
+```bash
+#!/usr/bin/env bash
+
+echo -e "\033[1;36m=== Temperatures ===\033[0m"
+
+# CPU
+cpu_temp=$(sensors | grep -E "Core [0-9]:" | awk '{print $3}' | sed 's/+//;s/°C//' | sort -nr | head -n1)
+echo -e "🔥 \033[1;32mCPU: \033[1;33m${cpu_temp}°C\033[0m"
+
+# GPU (NVIDIA)
+if command -v nvidia-smi &> /dev/null; then
+    gpu_temp=$(nvidia-smi --query-gpu=temperature.gpu --format=csv,noheader 2>/dev/null)
+    if [ -n "$gpu_temp" ]; then
+        echo -e "🎮 \033[1;32mGPU: \033[1;33m${gpu_temp}°C\033[0m"
+    fi
+fi
+```
+
+## Авто-форматирование C/C++ кода
+Этот скрипт на python я использую в своих C/C++ проектах, который является оберткой для clang-format. Для меня он удобен тем, что автоматизирует рекурсивное форматирование и стили, и можно добавлять прочие форматтеры, и запускать их всех вместе через этот скрипт.
+
+```python
+import argparse
+import os
+import subprocess
+
+count = 0
+
+
+def find_source_files(root_dir, ignore_dirs):
+    source_files = []
+    for dirpath, dirnames, filenames in os.walk(root_dir):
+        dirnames[:] = [d for d in dirnames if d not in ignore_dirs]
+
+        for filename in filenames:
+            if filename.endswith((".c", ".cpp", ".h", ".hpp", ".cc", ".cxx", ".hh")):
+                source_files.append(os.path.join(dirpath, filename))
+    return source_files
+
+
+def format_files(files, clang_format, style):
+    global count
+
+    for file in files:
+        try:
+            cmd = [clang_format, "-i", "--style", style, file]
+            subprocess.run(cmd, check=True)
+            print(f"\033[32mFormatted:\033[0m {file}")
+            count += 1
+        except subprocess.CalledProcessError as e:
+            print(f"\033[31mError formatting {file}:\033[0m {e}")
+
+
+def main():
+    parser = argparse.ArgumentParser(
+        description="Recursively format C/C++ files with clang-format"
+    )
+    parser.add_argument("root_dir", help="Root directory to search for source files")
+    parser.add_argument("--ignore", nargs="+", default=[], help="Directories to ignore")
+    parser.add_argument(
+        "--clang-format", default="clang-format", help="Path to clang-format executable"
+    )
+    parser.add_argument(
+        "--style", default="file", help="Formatting style (file/Google/LLVM/etc.)"
+    )
+
+    args = parser.parse_args()
+
+    print("\033[36m=== C/C++ Source Formatter ===\033[0m")
+    print(f"\033[33mRoot directory:\033[0m {args.root_dir}")
+    print(f"\033[33mIgnored directories:\033[0m {args.ignore or 'None'}")
+    print(f"\033[33mStyle:\033[0m {args.style}")
+    print("\033[36m" + "=" * 30 + "\033[0m")
+
+    source_files = find_source_files(args.root_dir, args.ignore)
+
+    if not source_files:
+        print("\033[33mNo C/C++ files found to format.\033[0m")
+        return
+
+    print(f"\033[33mFound {len(source_files)} files to format:\033[0m")
+    format_files(source_files, args.clang_format, args.style)
+    print(f"\033[32mFormatting complete ({count} files)!\033[0m")
+
+
+if __name__ == "__main__":
+    main()
+```
+
+## Проверка SSL-сертификата
+Данный скрипт позволяет проверить сколько дней осталось до даты истечения ssl-сертификата.
+
+```python
+#!/usr/bin/env python3
+import socket
+import sys
+import ssl
+from datetime import datetime, timezone
+
+
+def check_ssl_expiry(domain, days_before=7):
+    context = ssl.create_default_context()
+
+    with socket.create_connection((domain, 443)) as sock:
+        with context.wrap_socket(sock, server_hostname=domain) as ssock:
+            cert = ssock.getpeercert()
+
+    expiry_date = datetime.strptime(cert["notAfter"], "%b %d %H:%M:%S %Y %Z")
+    remaining_days = (expiry_date - datetime.now(timezone.utc).replace(tzinfo=None)).days
+
+    print(f'Domain: {domain}')
+    print(f"Remaining days: {remaining_days}")
+    print(f'Days before: {days_before}')
+
+
+check_ssl_expiry(sys.argv[1])
+```
+
+## Универсальный разархиватор
+Этот скрипт полезный, если вам нужно единой командой извлечь содержимое архива, автоматически подобрать команду под расширение.
+
+```bash
+#!/usr/bin/env bash
+# extract.sh [archive file] [optional: output directory]
+
+main() {
+    if [ $# -lt 1 ] || [ $# -gt 2 ]; then
+        echo "Usage: extract.sh [archive file] [optional: output directory]"
+        exit 1
+    fi
+
+    file="$1"
+    output_dir="${2:-.}"
+
+    if ! [ -f "$file" ]; then
+        echo "File $file does not exist."
+        exit 1
+    fi
+
+    if ! [ -d "$output_dir" ]; then
+        mkdir -p "$output_dir" || { echo "Failed to create output directory $output_dir"; exit 1; }
+        echo "Created output directory $output_dir"
+    fi
+
+    extract_file "$file" "$output_dir"
+}
+
+extract_file() {
+    local file=$1
+    local output_dir=$2
+
+    case "$file" in
+        *.tar.xz)  command_exists "tar" && tar -xvf "$file" -C "$output_dir" ;;
+        *.tar.gz)  command_exists "tar" && tar -xzf "$file" -C "$output_dir" ;;
+        *.tar.bz2) command_exists "tar" && tar -xjf "$file" -C "$output_dir" ;;
+        *.tar)     command_exists "tar" && tar -xf "$file" -C "$output_dir" ;;
+        *.tgz)     command_exists "tar" && tar -xzf "$file" -C "$output_dir" ;;
+        *.bz|*.bz2) command_exists "bzip2" && bzip2 -d -k "$file" ;;
+        *.gz)      command_exists "gunzip" && gunzip "$file" -c > "$output_dir" ;;
+        *.zip|*.jar) command_exists "unzip" && unzip "$file" -d "$output_dir" ;;
+        *.Z)      command_exists "zcat" && zcat "$file" | tar -xvf - -C "$output_dir" ;;
+        *.rar)    command_exists "rar" && rar x "$file" "$output_dir" ;;
+        *.7z)     command_exists "7z" && 7z x "$file" -o"$output_dir" ;;
+        *) echo "Unsupported archive format." ;;
+    esac
+}
+
+command_exists() {
+    command -v "$1" >/dev/null 2>&1 || { echo >&2 "I require $1 but it's not installed. Aborting."; exit 1; }
+}
+
+main "$@"
+```
+
+---
+
+В дополнении к этому, я нашел интересный комментарий из [этой статьи](https://habr.com/ru/companies/ruvds/articles/961514/).
+
+![](https://habrastorage.org/webt/t5/sy/ej/t5syejkizxexy5lwuf2ukkq0_qc.png)
 
 ## Заключение
-Спасибо за прочтение статьи! Я надеюсь, вы узнали что‑то новенькое, или, может, какой‑нибудь трюк натолкнул вас на другой интересный алгоритм. Если нашли нюанс в самой статье — пишите в комментарии.
+3Спасибо за прочтение статьи! Я надеюсь, вы узнали что‑то новенькое, или, может, какой‑нибудь трюк натолкнул вас на другой интересный алгоритм. Если нашли нюанс в самой статье — пишите в комментарии.
 
 Если вам понравился изложенный материал, могу предложить вам подписаться на [мой блог в телеграме](https://t.me/hex_warehouse). Если, конечно, вам статья понравилась и вы хотите видеть чуть больше.
 
-А сами скрипты вы можете увидеть в [моем репозитории The Art Of Fun C](https://github.com/alexeev-prog/usefulscripts).
+А сами скрипты вы можете увидеть в [моем репозитории](https://github.com/alexeev-prog/usefulscripts). Там вы можете еще больше скриптов на разных языках программирования, а также через PR поделиться своими наработками.
 
 ### Источники
 

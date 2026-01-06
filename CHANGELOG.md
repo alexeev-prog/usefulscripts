@@ -1,3 +1,9 @@
+commit 07139c95a6352329efeaee5137134f231787decc
+Author: Alexeev Bronislav <alexeev.dev@mail.ru>
+Date:   Mon Jan 5 19:39:32 2026 +0700
+
+    add systemdwrapper.py
+
 commit 8940220efa5353ca740e4efa2d5cfddd9da67acb
 Author: Alexeev Bronislav <alexeev.dev@mail.ru>
 Date:   Mon Jan 5 13:02:14 2026 +0700

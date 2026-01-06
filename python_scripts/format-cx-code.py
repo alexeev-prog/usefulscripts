@@ -8,7 +8,6 @@ count = 0
 def find_source_files(root_dir, ignore_dirs):
     source_files = []
     for dirpath, dirnames, filenames in os.walk(root_dir):
-        # Remove ignored directories from dirnames to prevent walking into them
         dirnames[:] = [d for d in dirnames if d not in ignore_dirs]
 
         for filename in filenames:

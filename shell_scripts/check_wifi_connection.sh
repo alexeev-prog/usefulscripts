@@ -1,9 +1,7 @@
 #!/usr/bin/env bash
 
-# Файл для хранения последней сети
 LAST_SSID_FILE="$HOME/.last_ssid"
 
-# Get current SSID
 CURRENT_SSID=$(nmcli -t -f active,ssid dev wifi | grep '^yes' | cut -d: -f2)
 
 if [ ! -f "$LAST_SSID_FILE" ]; then

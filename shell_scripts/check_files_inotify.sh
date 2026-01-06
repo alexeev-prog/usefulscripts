@@ -48,7 +48,7 @@ send_notification() {
     local event="$1"
     local file="$2"
     local message="$3"
-    
+
     if command -v notify-send &> /dev/null; then
         notify-send "File System Event" "${EVENT_EMOJIS[$event]} $message\nFile: $file" \
             --icon=dialog-information
@@ -60,11 +60,11 @@ process_events() {
     while read -r event file; do
         event=${event^^}
         event=${event//, / }
-        
+
         for e in $event; do
             color=${EVENT_COLORS[$e]:-$YELLOW}
             emoji=${EVENT_EMOJIS[$e]:-"⚡"}
-            
+
             echo -e "${color}${emoji} [${e}] ${file}${NC}"
             send_notification "$e" "$file" "File system event detected: ${e}"
         done
@@ -74,12 +74,12 @@ process_events() {
 main() {
     check_dependencies
     validate_directory
-    
+
     echo -e "${GREEN}👀 Watching directory: ${WATCH_DIR}${NC}"
     echo -e "${YELLOW}📝 Monitoring events: ${EVENTS}${NC}"
     echo -e "${BLUE}🚀 Press Ctrl+C to stop...${NC}"
     echo ""
-    
+
     process_events
 }
 

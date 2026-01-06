@@ -136,7 +136,8 @@ class CppAnalyzer:
             return report
 
         except Exception as e:
-            print(f"\033[1;31mError analyzing file {file_path}: {e}\033[0m")  # Red
+            # Red
+            print(f"\033[1;31mError analyzing file {file_path}: {e}\033[0m")
             report["error"] = str(e)  # Capture the error message
             return report
 
@@ -210,11 +211,13 @@ class CppAnalyzer:
                     if match:
                         includes.append(match.group(1))
         except Exception as e:
-            print(f"\033[1;31mCould not read file {file_path}: {e}\033[0m")  # Red
+            # Red
+            print(f"\033[1;31mCould not read file {file_path}: {e}\033[0m")
         return includes
 
     def analyze_directory(self) -> None:
-        print("\033[1;34mAnalyzing all C++ files in the repository...\033[0m")  # Blue
+        # Blue
+        print("\033[1;34mAnalyzing all C++ files in the repository...\033[0m")
         for root, dirs, files in os.walk(self.repo_path):
             # Ignore specified directories
             dirs[:] = [d for d in dirs if d not in self.IGNORED_DIRECTORIES]

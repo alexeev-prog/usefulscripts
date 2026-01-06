@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
-import os
-import re
-import subprocess
-import statistics
 import argparse
 import json
+import os
+import re
+import statistics
+import subprocess
 from typing import List, Tuple
 
 

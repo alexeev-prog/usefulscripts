@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 import argparse
-from urllib.parse import urlparse, parse_qsl
+from urllib.parse import parse_qsl, urlparse
 
 parser = argparse.ArgumentParser(description="Print out the parts of a URL")
 parser.add_argument("url", type=str, help="The URL to parse")
