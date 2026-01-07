@@ -1,3 +1,9 @@
+commit 4a474bc8a71f0af0a41ff51b1450ad2a104ef2a4
+Author: Alexeev Bronislav <alexeev.dev@mail.ru>
+Date:   Wed Jan 7 02:13:13 2026 +0700
+
+    fix codestyle, add extract.sh, update readme and article
+
 commit 07139c95a6352329efeaee5137134f231787decc
 Author: Alexeev Bronislav <alexeev.dev@mail.ru>
 Date:   Mon Jan 5 19:39:32 2026 +0700
